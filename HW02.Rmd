@@ -1,6 +1,6 @@
 ---
 title: "SDS315 - Homework 02"
-author: "Rachel Chavez - rcc3342"
+author: "Rachel Chavez - rcc3342 - https://github.com/ray-chav/SDS-315"
 date: "2025-01-23"
 output: html_document
 editor_options: 
