@@ -204,7 +204,6 @@ ggplot(capmetro_UT) + geom_point(aes(x = temperature, y = boarding, col = weeken
   theme_bw() +
   theme(axis.text.x=element_text(angle=90, hjust=1, vjust=0.5), text=element_text(size=7)) +
   labs(title = "CapMetro Boardings by Temperature for 6:00-21:00", x = "Temperature(F)", y = "Boarding Counts") +
-  #facet_grid(~hour_of_day)
   facet_wrap(~hour_of_day)
 
 ```
@@ -245,7 +244,6 @@ my.tab = kbl(top_ten, caption = "Top 10 Most Popular Songs by Weeks on Billboard
              col.names = c("Artist", "Song Title", "Total Weeks"),
              format = "latex", position = "h!")
 kable_styling(my.tab)
-# ADD A CAPTION TO THE TABLE YOU BUFFOON
 ```
 
 The table above depicts the top 10 most popular songs from 1958 to 2021,
