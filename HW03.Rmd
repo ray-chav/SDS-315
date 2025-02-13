@@ -281,12 +281,11 @@ ggplot(annoyed_bootstrap) + geom_histogram(aes(x = diffmean), fill = 'azure1', c
   theme_bw()
 
 
-After constructing a 95% confidence interval based off of our simulated distribution, we see that The Apprentice, on average, was considered 0.04 to 0.12 points more annoying than The Biggest Loser. Thus, the results indicate that audiences, on average, more consistently rate The Apprentice as slightly more annoying than The Biggest Loser.
+After constructing a 95% confidence interval based off of our simulated distribution, we see that The Apprentice, on average, was considered 0.52 to 0.02 points less annoying than The Biggest Loser. Thus, the results indicate that audiences, on average, more consistently rate The Apprentice as slightly less annoying than The Biggest Loser.
 
 {r B3.2}
 
 annoyed_confint <- confint(annoyed_bootstrap, value = 0.95)
-kable_styling(kbl(annoyed_confint))
 
 
 \pagebreak
@@ -314,7 +313,6 @@ By constructing a confidence interval, we can be 95% certain that the true propo
 {r C3.2}
 
 confused_confint <- confint(confused_bootstrap, value = 0.95)
-kable_styling(kbl(confused_confint))
 
 
 \pagebreak
@@ -340,7 +338,8 @@ ebay = ebay %>%
 ebay_bootstrap <- do(10000)*diffmean(rev_ratio~adwords_pause, data = resample(ebay))
 
 ebay_confint <- confint(ebay_bootstrap, value = 0.95)
-kable_styling(kbl(ebay_confint))
+kable_styling(kbl(ebay_confint,
+                  format = "latex", position = "h!"))
 
 
 From this distribution, I constructed a confidence interval to see between which numbers the true difference in revenue ratio is likely to fall. I am 95% confident that the treatment group's revenue ratio falls short of the control group's by some percentage from 1.4% to 9.1%. Thus, there is evidence indicating that paid search advertising consistently improves eBay's revenue ratio, and further investigation should be done.
