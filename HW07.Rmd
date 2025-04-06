@@ -49,7 +49,7 @@ The given dataset contains a matrix of 217 students from an Australian professor
 ggplot(armfold) + 
   geom_bar(aes(x = factor(as.logical(LonR_fold))), fill = 'lavender', col = 'black') + 
   facet_wrap(~Sex) +
-  labs(x="Left Arm on Top") +
+  labs(x="Left Arm on Top", title = "Distribution of Males and Females by Arm Folded on Top") +
   theme_bw()
 
 ```
@@ -251,8 +251,12 @@ ggplot(turnout) +
             labeller = labeller(voted1996 = c('0' = 'Did not vote in 1996', '1' = 'Did vote in 1996'))
              ) +
   scale_x_discrete(labels = c('No', 'Yes')) +
-  scale_fill_brewer(palette = "Set2") +
-  labs(x= "Voted in 1998?", y = "Frequency") + 
+  scale_fill_manual(
+    values = c("0" = "lavender", "1" = "#C4C3D0"), 
+    labels = c("0" = "Did Not Receive", "1" = "Received")
+  ) +
+  labs(x= "Voted in 1998?", y = "Frequency", title = "Voters from 1998-1996, and the GOTV Call",
+       fill = "Received the GOTV Call") + 
   theme_bw()
 
 # check if vote1998 and vote1996 are related
@@ -324,8 +328,13 @@ ggplot(turnout) +
   facet_wrap(~GOTV_call, nrow = 2,
              labeller = labeller(GOTV_call = c('0' = "Did Not Receive GOTV Call", '1' = "Received GOTV Call"))) +
   scale_x_discrete(labels = c('No', 'Yes')) +
-  scale_fill_brewer(palette = 1) +
-  labs(x= "Did they vote in 1998?", y = "Age") + 
+  scale_fill_manual(
+    values = c("0" = "lavender", "1" = "#C4C3D0"),
+    labels = c("0" = "Did Not Receive", "1" = "Received")
+  ) +
+  labs(x= "Did they vote in 1998?", y = "Age",
+       title = "Distribution of Age Among 1998 Voters & the GOTV Call",
+       fill = "Received GOTV Call") + 
   theme_bw()
 
 #-----
@@ -374,8 +383,13 @@ ggplot(turnout) +
             labeller = labeller(MAJORPTY = c('0' = 'Not Member of Major Party', '1' = 'Member of Major Party'))
              ) +
   scale_x_discrete(labels = c('No', 'Yes')) +
-  scale_fill_brewer(palette = "Set5") +
-  labs(x= "Voted in 1998?", y = "Frequency") + 
+  scale_fill_manual(
+    values = c("0" = "lavender", "1" = "#C4C3D0"),
+    labels = c("0" = "Did Not Receive", "1" = "Received")
+  ) +
+  labs(x= "Voted in 1998?", y = "Frequency",
+       title = "Voters from 1998, Party Affiliation, & the GOTV Call",
+       fill = "Received the GOTV Call") + 
   theme_bw()
 
 #------
@@ -476,8 +490,13 @@ ggplot(matched_data) +
   facet_wrap(~GOTV_call, nrow = 2,
              labeller = labeller(GOTV_call = c('0' = "Did Not Receive GOTV Call", '1' = "Received GOTV Call"))) +
   scale_x_discrete(labels = c('No', 'Yes')) +
-  scale_fill_brewer(palette = 1) +
-  labs(x= "Did they vote in 1998?", y = "Age") + 
+  scale_fill_manual(
+    values = c("0" = "lavender", "1" = "#C4C3D0"),
+    labels = c("0" = "Did Not Receive", "1" = "Received")
+  ) +
+  labs(x= "Did they vote in 1998?", y = "Age",
+       title = "Distribution of Age Among 1998 Voters & the GOTV Call",
+       fill = "Received GOTV Call") + 
   theme_bw()
 
 # re-t-testing if age influences GOTV
