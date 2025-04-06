@@ -1,6 +1,6 @@
 ---
 title: "HW7 - SDS315"
-author: "Rachel Chavez - rcc3342 - {GITHUB}"
+author: "Rachel Chavez - rcc3342 - https://github.com/ray-chav/SDS-315/blob/main/HW07.Rmd"
 date: "2025-04-02"
 output:
   pdf_document: default
