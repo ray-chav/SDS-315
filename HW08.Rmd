@@ -1,0 +1,297 @@
+---
+title: "Homework 08"
+author: "Rachel Chavez - rcc3342 - {GitHub}"
+date: "2025-04-09"
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+# Homework 08
+
+```{r library}
+
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+library(minpack.lm)
+library(mosaic)
+
+```
+
+# Problem 1: regression warm up
+
+Below, a linear model is fitted to data of people's creatinine levels (mL/minute) and their ages.
+
+```{r read1}
+
+creatinine <- read_csv('creatinine.csv')
+
+```
+
+## A) What creatinine clearance rate should we expect for a 55-year-old? Explain briefly (one or two sentences + equations) how you determined this.
+
+By using the lm() function in R, we can build a linear function that minimizes each data point's distance to its line. When we want to find a person's expected creatinine level based off of their age, we can do so by plugging in our independent age parameter into the model.
+
+```{r A1}
+
+# build linear model
+creat_model <- lm(creatclear ~ age, data = creatinine)
+
+# now specifically check for the 55 year old
+#print(predict(creat_model, newdata = data.frame(age = 55)))
+# 113.723
+
+```
+
+Based off of this model, for a 55-year-old, we can estimate their
+creatinine clearance rate at
+`r round(predict(creat_model, newdata = data.frame(age = 55)),3)`
+mL/minute.
+
+## B) How does creatinine clearance rate change with age? (This should be a single number whose units are ml/minute per year.) Explain briefly (one or two sentences) how you determined this.
+
+The change in creatinine clearance rate with age is represented by the
+slope of the regression model, which is approximately -0.619 mL/min per
+year.
+
+```{r B1}
+
+summary(creat_model)
+# The change in creatinine clearance rate with age is represented by the slope of the regression model, which is -0.61982 mL/min per year.
+
+```
+
+## C) Whose creatinine clearance rate is healthier (higher) for their age: a 40-year-old with a rate of 135, or a 60-year-old with a rate of 112? Explain briefly (a few sentences + equations) how you determined this
+
+To determine which creatinine clearance rate is healthier for their age,
+we compare their actual rate to the predicted value from a regression model, based on their age. To determine where somebody's clearance rate is in comparison to their expected value, we can do the following equation: $Difference=ObservedClearance−PredictedClearance$, where the observed clearance is the given creatinine clearance rate, and the predicted clearance is the output of our linear function when given the observed age.
+
+For the 40-year-old, their creatinine clearance rate of 135 is 11.98
+mL/minute higher than the predicted value for someone of that age.
+
+For the 60-year-old, their creatinine clearance rate of 112 is 1.38
+mL/minute higher than the predicted value for someone of that age.
+
+Thus, the 40-year-old has a higher relative creatinine clearance rate
+compared to their age, indicating that their rate is healthier
+for their age.
+
+```{r C1}
+
+# 40 year old
+print(135 - predict(creat_model, newdata = data.frame(age = 40)))
+# 11.98
+
+# 60 year old
+print(112 - predict(creat_model, newdata = data.frame(age = 60)))
+# 1.38
+
+```
+
+# Problem 2: Modeling disease growth
+
+The file covid.csv contains data on daily reported COVID-19 deaths for
+Italy and Spain—two of the hardest-hit European countries—during the
+first pandemic wave in February and March of 2020. The columns in this
+data frame are: • date: the calendar date • country: Italy or Spain •
+deaths: the number of reported COVID-19 deaths in that country on that
+day • days_since_first_death: the number of days elapsed since the first
+death in that country Your task is to fit two exponential growth models,
+one for Italy and one for Spain, using days_since_first_death as the
+time variable. Use the results of your model to characterize the growth
+rate and doubling time of the daily death total in each country
+
+## 1) An estimated growth rate and doubling time for Italy, with 95% bootstrapped confidence intervals for each.
+
+Below is a table of summary statistics for this data set. From it, we see
+that the average deaths for Italy and Spain were 318.718 and 292.464 deaths, respectively,
+occuring 19.0 and 13.5 days after the first recorded death, on average.
+
+By fitting an exponential growth model to Italy and Spain's COVID-19
+data, we estimate our observed growth rate to be 0.183 and 0.276,
+respectively. Thus, the observed doubling times for this sample were 3.8
+and 2.5.
+
+```{r A2}
+
+# reading in data
+covid_data <- read_csv("covid.csv")
+
+# filter data for Italy and Spain
+italy_data <- filter(covid_data, country == "Italy")
+spain_data <- filter(covid_data, country == "Spain")
+
+# tibble of summary statistics
+tab <- covid_data %>%
+  group_by(Country = country) %>%
+  summarize(Average_Deaths = round(mean(deaths), 3), Average_Days = mean(days_since_first_death))
+
+kable_styling(kable(
+  tab,
+  caption = "Summary Statistics of COVID-19 Deaths"
+))
+
+# fit exponential growth models for Italy and Spain
+# deaths = exp(intercept + growth_rate * days_since_first_death)
+italym <- lm(log(deaths) ~ days_since_first_death, data = italy_data)
+spainm <- lm(log(deaths) ~ days_since_first_death, data = spain_data)
+
+# grab model summaries
+# coef(italym) %>% round(0)
+# coef(spainm) %>% round(0)
+
+# find b (growth rates) for both models
+# rounded to nearest third
+italy_growth_rate <- round(coef(italym)[2], 3)
+spain_growth_rate <- round(coef(spainm)[2], 3)
+
+# doubling time = ln(2) / growth_rate
+# rounded to nearest tenth
+italy_doubling_time <- round(log(2) / italy_growth_rate, 1)
+spain_doubling_time <- round(log(2) / spain_growth_rate, 1)
+
+# print both growth rates and doubling time out
+print(paste("Italy Growth Rate:", italy_growth_rate, "Doubling Time:", italy_doubling_time))
+print(paste("Spain Growth Rate:", spain_growth_rate, "Doubling Time:", spain_doubling_time))
+
+```
+
+Now, by bootstrapping 10,000 samples from our original sample of Italy's
+COVID cases, we can construct a confidence interval for both of these
+statistics.
+
+```{r}
+
+#--------
+# BOOT STRAPPING!!
+
+# bootstrap a bunch of samples from italy
+# and then build a lm for each one
+italy_bootstrap <- do(10000) * {
+  model <- lm(log(deaths) ~ days_since_first_death, data = mosaic::resample(italy_data))
+  coef(model)[2]  # extract the slope (growth rate)
+}
+
+# confidence interval
+italy_ci <- confint(italy_bootstrap, value = 0.95)
+
+# print it out os i can look at it teehee
+print(paste("Italy Growth Rate 95% CI: ", 
+    round(italy_ci$upper, 3), " to ", round(italy_ci$lower, 3)))
+
+# calculate doubling time for all of our bootstrapped growth rates
+italy_doubling_time <- log(2) / italy_bootstrap
+
+# confidence interval
+italy_dt_ci <- confint(italy_doubling_time, value = 0.95)
+
+# print out doubling time estimates
+print(paste("Italy Doubling Time 95% CI: ", 
+    round(italy_dt_ci$lower, 1), " to ", round(italy_dt_ci$upper, 1)))
+
+```
+
+Using an exponential growth model fitted to Spain’s bootstrapped
+samples, we estimate Italy's COVID-19 growth rate to fall between 0.201 and 0.165 increase in
+deaths per day, with 95% confidence. Additionally, its doubling time for
+COVID deaths was between 3.7 to 3.8 days.
+
+## 2) An estimated growth rate and doubling time for Spain, with 95% bootstrapped confidence intervals for each.
+
+Based on our confidence interval built on bootstrapping, the estimated daily growth rate of deaths was between 0.233 and 0.322 per day, with 95% confidence. Based on this, the estimated
+doubling time of daily deaths in Spain was between 2.4 and 2.5 days,
+indicating that the death count was doubling roughly every two and a half days.
+
+```{r B2}
+
+# same deal as above but with Spain
+spain_bootstrap <- do(10000) * {
+  model <- lm(log(deaths) ~ days_since_first_death, data = mosaic::resample(spain_data))
+  coef(model)[2]  # extract the slope (growth rate)
+}
+
+# confidence interval
+spain_ci <- confint(spain_bootstrap, value = 0.95)
+print(paste("Spain Growth Rate 95% CI: ", 
+    round(spain_ci$lower, 3), " to ", round(spain_ci$upper, 3)))
+
+# now recalculate doubling time into a df from our bootstrapped growth rates
+spain_doubling_time <- log(2) / spain_bootstrap
+
+# new confidence interval
+spain_dt_ci <- confint(spain_doubling_time, value = 0.95)
+print(paste("Spain Doubling Time 95% CI: ", 
+    round(spain_dt_ci$lower, 1), " to ", round(spain_dt_ci$upper, 1)))
+
+```
+
+## 3) A line graph showing reported daily deaths over time (using days_since_first_death, rather than calendar date, as the relevant time variable) in each country. Your line graph should have two lines, one for each country, distinguished by their color.
+
+The graph shows the number of reported COVID-19 deaths over the number of days since each
+country's first reported death in Italy and Spain. Each point represents the number of
+deaths on a given day, and the two countries are distinguished by color.
+The positive slope of each line indicates an upward, exponential trend in deaths during the early
+stages of the pandemic.
+
+The shaded regions around each country's trend line represent 95%
+confidence intervals, being the range of uncertainty for the true
+trend in deaths over days.
+
+```{r C2}
+
+# plotting
+ggplot(covid_data) + 
+  geom_point(aes(x=days_since_first_death, y=deaths, color=country), alpha = 0.3) +
+  geom_smooth(aes(x=days_since_first_death, y=deaths, color=country),  method='lm')
+
+```
+
+# Problem 3: price elasticity of demand
+
+To estimate the price elasticity of demand for milk, we used a power-law
+model (log(Q)=log(K)+β⋅log(P)). We fit a linear
+regression model with log(sales) as the response and log(price) as the
+predictor. The estimated price elasticity (β̂) for our initial sample is -1.6186 , indicating
+that a 1% increase in milk price leads to an estimated 1.62% decrease in quantity demanded.
+
+From our original sample, we can bootstrap 10,000 resamples in order to continuously remodel our data and recalculate our elasticity. 
+
+```{r C3}
+
+milk <- read_csv('milk.csv')
+
+# Q = KP^B
+# logQ = Blog(P)
+# build elasticity model
+milk_model <- lm(log(sales) ~ log(price), data = milk)
+
+# grab our sample B
+coef(milk_model)[2] %>% round(4)
+# B = -1.6186
+
+# milk bootstrap
+milk_bootstrap <- do(10000) * {
+  model = lm(log(sales) ~ log(price), data = mosaic::resample(milk))
+  coef(model)[2]
+}
+
+# confidence interval for milk price elasticity
+milk_ci <- confint(milk_bootstrap$log.price., value = 0.95)
+#milk_ci <- confint(milk_bootstrap, value = 0.95)
+
+
+# print confidence interval
+print(paste("Milk Elasticity 95% CI: ", 
+    round(milk_ci$`2.5%`, 4), " to ", round(milk_ci$`97.5%`, 4)))
+
+```
+
+To quantify uncertainty, we used bootstrapping with 1,000 resamples. The 95% confidence interval for the price elasticity of demand is between -1.7706 and -1.4603. This suggests that as the price of milk increases by 1.0%, the quantity demanded decreases by approximately 1.46% to 1.77%. Since the absolute value of the elasticity is greater than 1, this indicates that milk demand is elastic. Customers are relatively responsive to changes in price.
