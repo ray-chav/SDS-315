@@ -241,7 +241,8 @@ trend in deaths over days.
 # plotting
 ggplot(covid_data) + 
   geom_point(aes(x=days_since_first_death, y=deaths, color=country), alpha = 0.3) +
-  geom_smooth(aes(x=days_since_first_death, y=deaths, color=country),  method='lm')
+  geom_smooth(aes(x=days_since_first_death, y=deaths, color=country),  method='lm') +
+  labs(title = "Daily Death Rate Growth by Days", x = "Days Since Country's First Death", y = "Death Count")
 
 ```
 
