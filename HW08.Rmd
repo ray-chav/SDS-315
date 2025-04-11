@@ -64,7 +64,7 @@ year.
 
 ```{r B1}
 
-summary(creat_model)
+#summary(creat_model)
 # The change in creatinine clearance rate with age is represented by the slope of the regression model, which is -0.61982 mL/min per year.
 
 ```
@@ -72,7 +72,7 @@ summary(creat_model)
 ## C) Whose creatinine clearance rate is healthier (higher) for their age: a 40-year-old with a rate of 135, or a 60-year-old with a rate of 112? Explain briefly (a few sentences + equations) how you determined this
 
 To determine which creatinine clearance rate is healthier for their age,
-we compare their actual rate to the predicted value from a regression model, based on their age. To determine where somebody's clearance rate is in comparison to their expected value, we can do the following equation: $Difference=ObservedClearance−PredictedClearance$, where the observed clearance is the given creatinine clearance rate, and the predicted clearance is the output of our linear function when given the observed age.
+we compare their actual rate to the predicted value from a regression model, based on their age. To determine where somebody's clearance rate is in comparison to their expected value, we can do the following equation: $Difference=ObservedClearance-PredictedClearance$, where the observed clearance is the given creatinine clearance rate, and the predicted clearance is the output of our linear function when given the observed age.
 
 For the 40-year-old, their creatinine clearance rate of 135 is 11.98
 mL/minute higher than the predicted value for someone of that age.
@@ -87,27 +87,18 @@ for their age.
 ```{r C1}
 
 # 40 year old
-print(135 - predict(creat_model, newdata = data.frame(age = 40)))
+#print(135 - predict(creat_model, newdata = data.frame(age = 40)))
 # 11.98
 
 # 60 year old
-print(112 - predict(creat_model, newdata = data.frame(age = 60)))
+#print(112 - predict(creat_model, newdata = data.frame(age = 60)))
 # 1.38
 
 ```
 
 # Problem 2: Modeling disease growth
 
-The file covid.csv contains data on daily reported COVID-19 deaths for
-Italy and Spain—two of the hardest-hit European countries—during the
-first pandemic wave in February and March of 2020. The columns in this
-data frame are: • date: the calendar date • country: Italy or Spain •
-deaths: the number of reported COVID-19 deaths in that country on that
-day • days_since_first_death: the number of days elapsed since the first
-death in that country Your task is to fit two exponential growth models,
-one for Italy and one for Spain, using days_since_first_death as the
-time variable. Use the results of your model to characterize the growth
-rate and doubling time of the daily death total in each country
+The below is an analysis of COVID-19 cases in Italy and Spain based off of their daily recorded deaths and the days elapsed since the country's first COVID-19 related death.
 
 ## 1) An estimated growth rate and doubling time for Italy, with 95% bootstrapped confidence intervals for each.
 
@@ -257,9 +248,9 @@ ggplot(covid_data) +
 # Problem 3: price elasticity of demand
 
 To estimate the price elasticity of demand for milk, we used a power-law
-model (log(Q)=log(K)+β⋅log(P)). We fit a linear
+model (log(Q)=log(K)+Blog(P)). We fit a linear
 regression model with log(sales) as the response and log(price) as the
-predictor. The estimated price elasticity (β̂) for our initial sample is -1.6186 , indicating
+predictor. The estimated price elasticity for our initial sample is -1.6186 , indicating
 that a 1% increase in milk price leads to an estimated 1.62% decrease in quantity demanded.
 
 From our original sample, we can bootstrap 10,000 resamples in order to continuously remodel our data and recalculate our elasticity. 
