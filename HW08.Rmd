@@ -1,6 +1,6 @@
 ---
 title: "Homework 08"
-author: "Rachel Chavez - rcc3342 - {GitHub}"
+author: "Rachel Chavez - rcc3342 - https://github.com/ray-chav/SDS-315/blob/main/HW08.Rmd"
 date: "2025-04-09"
 output:
   pdf_document: default
